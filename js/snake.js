@@ -1,6 +1,12 @@
 import {gameObject} from './gameObject.js';
 
 export class Snake extends gameObject{
+    constructor(x, y, color){
+        super();
+        this.#x = this.setX(x);
+        this.#y = this.setY(y);
+        this.color = color;
+    }
     //public atributes
     velocityX = 0;
     velocityY = 0;
@@ -10,13 +16,6 @@ export class Snake extends gameObject{
     //private atributes
     #x;
     #y;
-
-    constructor(x, y, color){
-        super();
-        this.#x = this.setX(x);
-        this.#y = this.setY(y);
-        this.color = color;
-    }
 
     //public methods
     setX(x){

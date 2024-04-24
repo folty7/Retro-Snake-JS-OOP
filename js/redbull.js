@@ -1,17 +1,13 @@
-import {gameObject} from "./gameObject.js";
+import {Food} from "./food.js";
 
-export class Food extends gameObject{
+export class RedBull extends Food{
     constructor(rows, cols, blockSize){
-        super();
-        // Math.random vracia cislo 0-1
-        // Math.floor zaokruhli na cele cislo
-        // nasobime cols = 0-19
-        // nasobime blockSize
+        super(rows, cols, blockSize);
         this.#x = Math.floor(Math.random() * cols) * blockSize;     //konstruktor s random spawnom jedla
         this.#y = Math.floor(Math.random() * rows) * blockSize;
 
         this.#image = new Image(50, 50);
-        this.#image.src = "./includes/img/apple.png";
+        this.#image.src = "./includes/img/redbull.png";
     }
     //private
     #x;
@@ -34,5 +30,11 @@ export class Food extends gameObject{
     }
     getImage(){
         return this.#image.src;
+    }
+
+    // RedBull effect
+    // po vypiti zmyznu 3 plamene
+    drink(fire){
+        fire.pop();
     }
 }
