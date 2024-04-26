@@ -10,22 +10,29 @@ var cols = 18;
 var board;
 var ctx;
 var gameInterval;
-var score;
+var score = 0;
+var scoreElement;
 var snake;
 var food = [];
 var fires = [];
 var bestScore = 0;
 var bestScoreElement;
 var redbulls = [];
+var level = 1;
+var levelElement;
 
 window.onload = function () {
     board = document.getElementById('board');
     board.height = rows * blockSize;
     board.width = cols * blockSize;
     ctx = board.getContext('2d');
-    score = document.getElementById('score');
+    scoreElement = document.getElementById('score');
+    scoreElement.innerText = score;
     bestScoreElement = document.getElementById('bestScore');
     bestScoreElement.innerText = bestScore;
+    levelElement = document.getElementById('level');
+    levelElement.innerText = level;
+
 
     snake = new Snake(blockSize * 5, blockSize * 5, '#F700FFFF');        //lokacia spawnu hada
     food.push(new Food(rows, cols, blockSize));
@@ -69,24 +76,35 @@ function update() {
         ctx.drawImage(redbullImg, redbull.getX(), redbull.getY(), blockSize, blockSize);
     });
 
+    if (score >= 5){
+        level = 2;
+        levelElement.innerText = level;
+    } else if (score >= 10){
+        level = 3;
+        levelElement.innerText = level;
+    }
+
     //kolizia hada s jedlom
     food.map((oneFood, index) => {
         if (snake.getX() == oneFood.getX() && snake.getY() == oneFood.getY()) {
             snake.body.push([oneFood.getX(), oneFood.getY()]);
             food.splice(index, 1); // Remove the Food object that the snake collided with
             newFood();
-            score.innerText = snake.body.length;
+            score++;
+            scoreElement.innerText = snake.body.length;
             newFire()
             newRedBull();
         }
     });
 
+    //kolizia hada s redbullom
     redbulls.map((redbull, index) => {
         if (snake.getX() == redbull.getX() && snake.getY() == redbull.getY()) {
             redbull.drink(fires);
             redbulls.splice(index, 1); // Remove the RedBull object that the snake collided with
             snake.body.push([redbull.getX(), redbull.getY()]);
-            score.innerText = snake.body.length;
+            score++;
+            scoreElement.innerText = snake.body.length;
         }
     });
 
@@ -156,7 +174,10 @@ function restartGame() {
     food = [];
     fires = [];
     redbulls = [];
-    score.innerText = 0;
+    level = 1;
+    levelElement.innerText = level;
+    score = 0;
+    scoreElement.innerText = score;
 
     // Reset food position
     newFood();
