@@ -34,7 +34,7 @@ export class RedBull extends Food{
 
     // RedBull effect
     // po vypiti zmyznu 3 plamene
-    drink(fire){
+    eat(fire){
         fire.pop();
     }
 }

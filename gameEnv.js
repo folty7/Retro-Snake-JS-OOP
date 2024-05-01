@@ -18,8 +18,6 @@ var fires = [];
 var bestScore = 0;
 var bestScoreElement;
 var redbulls = [];
-var level = 1;
-var levelElement;
 
 window.onload = function () {
     board = document.getElementById('board');
@@ -30,11 +28,11 @@ window.onload = function () {
     scoreElement.innerText = score;
     bestScoreElement = document.getElementById('bestScore');
     bestScoreElement.innerText = bestScore;
-    levelElement = document.getElementById('level');
-    levelElement.innerText = level;
 
 
     snake = new Snake(blockSize * 5, blockSize * 5, '#F700FFFF');        //lokacia spawnu hada
+    // snake.body.push([blockSize * 5, blockSize * 5]); // Add the initial part of the snake
+    console.log(snake.body);
     food.push(new Food(rows, cols, blockSize));
 
     document.addEventListener('keyup', changeDir);
@@ -76,13 +74,6 @@ function update() {
         ctx.drawImage(redbullImg, redbull.getX(), redbull.getY(), blockSize, blockSize);
     });
 
-    if (score >= 5){
-        level = 2;
-        levelElement.innerText = level;
-    } else if (score >= 10){
-        level = 3;
-        levelElement.innerText = level;
-    }
 
     //kolizia hada s jedlom
     food.map((oneFood, index) => {
@@ -100,7 +91,7 @@ function update() {
     //kolizia hada s redbullom
     redbulls.map((redbull, index) => {
         if (snake.getX() == redbull.getX() && snake.getY() == redbull.getY()) {
-            redbull.drink(fires);
+            redbull.eat(fires);
             redbulls.splice(index, 1); // Remove the RedBull object that the snake collided with
             snake.body.push([redbull.getX(), redbull.getY()]);
             score++;
@@ -147,11 +138,14 @@ function update() {
     //kolizia hada s ohnom
     fires.map((fire, index) => {
         if (snake.getX() == fire.getX() && snake.getY() == fire.getY()) {
-            alert("GAME OVER! \n" +
-                "Tvoje skóre je: " + snake.body.length + "\n" +
-                "Pre spustenie novej hry stlač OK'");
-            restartGame(); // Restart the game
-            return; // Exit update function to prevent further processing
+            if (!fire.eat(snake)) {
+                alert("GAME OVER! \n" +
+                    "Tvoje skóre je: " + snake.body.length + "\n" +
+                    "Pre spustenie novej hry stlač OK'");
+                restartGame(); // Restart the game
+                return; // Exit update function to prevent further processing
+            }
+            fires.splice(index, 1);
         }
     });
 }
@@ -171,11 +165,10 @@ function restartGame() {
     snake.velocityX = 0;
     snake.velocityY = 0;
     snake.body = [];
+    // snake.body.push([blockSize * 5, blockSize * 5]);
     food = [];
     fires = [];
     redbulls = [];
-    level = 1;
-    levelElement.innerText = level;
     score = 0;
     scoreElement.innerText = score;
 
@@ -185,12 +178,12 @@ function restartGame() {
     // Start a new game interval
     gameInterval = setInterval(update, 1000 / 10);
 }
-
 function newFood() {
     food.push(new Food(rows, cols, blockSize));
 }
 
 function newFire() {
+    fires.push(new Fire(rows, cols, blockSize));
     fires.push(new Fire(rows, cols, blockSize));
 }
 
